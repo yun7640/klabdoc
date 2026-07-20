@@ -29,17 +29,15 @@ async function initPg() {
       created_at  TIMESTAMPTZ NOT NULL DEFAULT now()
     );
   `);
-  const { rows } = await pool.query('SELECT COUNT(*)::int AS c FROM users');
-  if (rows[0].c === 0) {
-    const hash = bcrypt.hashSync(DEFAULT_PIN, 10);
-    for (const u of SEED_USERS) {
-      await pool.query(
-        'INSERT INTO users (id,name,role,grp,pin_hash) VALUES ($1,$2,$3,$4,$5) ON CONFLICT (id) DO NOTHING',
-        [u.id, u.name, u.role, u.group, hash]
-      );
-    }
-    console.log(`[db] seeded ${SEED_USERS.length} users (PIN=${DEFAULT_PIN})`);
+  // 시드 사용자를 멱등하게 보장: 없는 사용자만 추가하고 기존 계정/PIN은 유지
+  const hash = bcrypt.hashSync(DEFAULT_PIN, 10);
+  for (const u of SEED_USERS) {
+    await pool.query(
+      'INSERT INTO users (id,name,role,grp,pin_hash) VALUES ($1,$2,$3,$4,$5) ON CONFLICT (id) DO NOTHING',
+      [u.id, u.name, u.role, u.group, hash]
+    );
   }
+  console.log(`[db] ensured ${SEED_USERS.length} seed users (new ones get PIN=${DEFAULT_PIN})`);
 }
 
 // ---- 메모리 폴백 ----
