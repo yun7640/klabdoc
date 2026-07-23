@@ -87,6 +87,7 @@ tbody tr:hover{background:#f9fbfe}
 .section-head{display:flex;align-items:center;gap:12px;margin:0 0 6px}
 .section-head h2{font-size:19px;margin:0;color:var(--navy)}
 .muted{color:var(--grey);font-size:12.5px}
+.mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:12.5px;background:#f3f5f8;padding:1px 5px;border-radius:5px}
 .pill-tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
 .pill-tabs button{border:1px solid var(--line);background:#fff;border-radius:20px;padding:5px 14px;font-size:12.5px;color:#4a5568}
 .pill-tabs button.on{background:var(--navy);color:#fff;border-color:var(--navy);font-weight:700}
@@ -195,8 +196,11 @@ tbody tr:hover{background:#f9fbfe}
       <a data-view="manage"><span class="ic">▥</span><span class="t">지침서 관리</span><span class="badge" id="nb-manage" style="display:none"></span></a>
       <a data-view="quality"><span class="ic">✔</span><span class="t">인증·품질</span><span class="badge" id="nb-quality" style="display:none"></span></a>
       <a data-view="settings"><span class="ic">⚙</span><span class="t">설정</span></a>
+      <div class="navgrp">도움말</div>
+      <a data-view="manual"><span class="ic">📖</span><span class="t">사용자 설명서</span></a>
+      <a data-view="techdoc"><span class="ic">🛠</span><span class="t">기술문서</span></a>
     </nav>
-    <div class="foot">v1.2 · 2026<br>대한임상화학회 업무자동화 공모전</div>
+    <div class="foot">v1.3 · 2026<br>대한임상화학회 업무자동화 공모전</div>
   </aside>
 
   <div class="main">
@@ -2562,7 +2566,7 @@ V.approvals=function(){
 
 /* ================= SHELL ================= */
 let currentView="dashboard";
-const TITLES={dashboard:"대시보드",mypage:"마이페이지",viewer:"지침서 열람·검색",visuals:"시각 가이드",learn:"교육 과정",manage:"지침서 관리",quality:"인증·품질",settings:"설정"};
+const TITLES={dashboard:"대시보드",mypage:"마이페이지",viewer:"지침서 열람·검색",visuals:"시각 가이드",learn:"교육 과정",manage:"지침서 관리",quality:"인증·품질",settings:"설정",manual:"사용자 설명서",techdoc:"기술문서"};
 /* Hub (tabbed) views — consolidates related sub-views under one menu */
 const HUBS={
   mypage:{title:"마이페이지",tabs:[{key:"mpProfile",label:"프로필"},{key:"mpLibrary",label:"나의 자료실"},{key:"mpProgress",label:"교육 이수중"},{key:"mpHistory",label:"이수 내역"}]},
@@ -2607,6 +2611,131 @@ function nav(v){currentView=v;document.querySelectorAll("#nav a").forEach(a=>a.c
 function openTab(hub,key){ DB._tab=DB._tab||{}; DB._tab[hub]=key; nav(hub); }
 /* hub view functions */
 V.learn=()=>hubShell("learn"); V.manage=()=>hubShell("manage"); V.quality=()=>hubShell("quality"); V.settings=()=>hubShell("settings"); V.mypage=()=>hubShell("mypage");
+
+/* ================= 사용자 설명서 ================= */
+V.manual = function(){
+  return `
+  <div class="section-head"><h2>📖 사용자 설명서</h2><span class="muted">K‑LabDoc 화면 사용 안내 · 신입/인수인계 참고</span></div>
+  <div class="toolbar no-print"><span class="muted">이 문서는 인쇄(PDF 저장)하여 배포할 수 있습니다.</span><div class="spacer" style="flex:1"></div><button class="btn" onclick="window.print()">🖨 인쇄 / PDF</button></div>
+
+  <div class="card"><h3>1. 로그인</h3>
+    <ol style="margin:6px 0 0 18px;line-height:1.9">
+      <li>상단 탭에서 <b>전문의 / 임상병리사</b> 그룹을 선택합니다.</li>
+      <li>본인 이름 카드를 선택하고 <b>PIN 4자리</b>를 입력한 뒤 <b>로그인</b>을 누릅니다. (초기 PIN <b>0000</b>)</li>
+      <li>로그인 계정은 서버(Railway)에서 검증되며, 화면 우측 상단에 이름·직군이 표시됩니다.</li>
+      <li>PIN은 <b>마이페이지</b>에서 변경할 수 있습니다. 관리자(전문의)는 사용자 추가가 가능합니다.</li>
+    </ol></div>
+
+  <div class="card"><h3>2. 화면 구성</h3>
+    <p class="muted" style="margin:4px 0 8px">좌측 사이드바에서 기능으로 이동합니다.</p>
+    <div class="two">
+      <div>· <b>대시보드</b> — 오늘 할 일·현황 요약</div>
+      <div>· <b>마이페이지</b> — 내 자료실·교육 이수 현황</div>
+      <div>· <b>지침서 열람·검색</b> — 업무 중 내용 참조·인쇄</div>
+      <div>· <b>교육 과정</b> — 역할별 과정·이수 퀴즈</div>
+      <div>· <b>시각 가이드</b> — 순서도·요약표</div>
+      <div>· <b>지침서 관리</b> — 작성·개정·검토·승인·이력</div>
+      <div>· <b>인증·품질</b> — 인증 준비도·실사 대응·CAPA·지표</div>
+      <div>· <b>설정</b> — 데이터 백업·감사로그</div>
+    </div></div>
+
+  <div class="card"><h3>3. 지침서 열람·검색 (업무 중 참조)</h3>
+    <ol style="margin:6px 0 0 18px;line-height:1.9">
+      <li>왼쪽 <b>지침서 열람·검색</b> → 상단에서 문서를 선택합니다.</li>
+      <li><b>목차(TOC)</b>로 해당 섹션으로 바로 이동하거나, <b>검색창</b>에 키워드를 입력해 전문 검색합니다.</li>
+      <li>중요한 섹션은 <b>북마크</b>로 표시하고, 필요한 섹션/문서를 <b>인쇄(PDF 저장)</b>할 수 있습니다.</li>
+      <li>HWP·Word 지침서는 <b>지침서 관리 → 가져오기</b>로 불러오면 이 화면에서 열람됩니다.</li>
+    </ol></div>
+
+  <div class="card"><h3>4. 지침서 관리 (작성·개정·승인)</h3>
+    <ol style="margin:6px 0 0 18px;line-height:1.9">
+      <li><b>＋ 새 지침서</b>로 신규 제정, 기존 문서는 <b>개정</b> 버튼으로 새 버전을 작성합니다.</li>
+      <li>저장하면 상태가 <b>검토</b> 대기로 바뀝니다. 전문의/파트장이 <b>검토 전자서명</b> → 전문의가 <b>승인 전자서명</b>하면 발효됩니다.</li>
+      <li><b>이력</b> 버튼에서 작성·개정 이력(일자·작성자·전자서명)을 조회하고, 개정판의 <b>개정 내용 확인</b>(변경 전·후 비교)을 볼 수 있습니다.</li>
+      <li>개정이 승인되면 담당자에게 <b>재숙지 교육</b>이 자동 배정됩니다.</li>
+    </ol></div>
+
+  <div class="card"><h3>5. 교육 과정 (신입·인수인계)</h3>
+    <ol style="margin:6px 0 0 18px;line-height:1.9">
+      <li><b>교육 과정 → 맞춤 교육 과정</b>에서 역할별 과정(신입/인수인계/응급 당직)을 학습합니다.</li>
+      <li>과정 끝의 <b>퀴즈를 만점</b>으로 통과하면 이수 처리되고 <b>이수증(PDF)</b>을 받을 수 있습니다.</li>
+      <li>관리자는 <b>팀 이수 현황</b>에서 구성원별 진행 상태를 확인합니다.</li>
+    </ol></div>
+
+  <div class="card"><h3>6. 인증·품질</h3>
+    <ol style="margin:6px 0 0 18px;line-height:1.9">
+      <li><b>인증 준비도</b>에서 진단검사의학재단 점검표 문항을 <b>예/부분/아니오/해당없음</b>으로 판정하면 분야별·종합 점수가 계산됩니다.</li>
+      <li><b>실사 대응</b>에서 문항을 선택하면 근거자료가 한 화면에 취합되어 인쇄할 수 있습니다.</li>
+      <li><b>CAPA·핵심지표</b>로 개선 조치와 지표를 관리합니다.</li>
+    </ol></div>
+
+  <div class="card"><h3>7. 데이터 백업 · 주의</h3>
+    <p style="line-height:1.9;margin:4px 0 0">· 검사실 업무 데이터는 <b>사용 중인 브라우저에 로컬 저장</b>됩니다(개인정보 외부전송 최소화). 기기/브라우저가 바뀌면 <b>설정 → 데이터·설정 → JSON 내보내기/가져오기</b>로 이관하세요.<br>
+    · 로그인 <b>계정만</b> 서버에서 중앙 관리됩니다.<br>
+    · 공용 PC에서는 사용 후 <b>로그아웃</b>하세요.</p></div>
+
+  <div class="card"><h3>자주 묻는 질문</h3>
+    <p style="line-height:1.9;margin:4px 0 0"><b>Q. PIN을 잊었어요.</b> 관리자(전문의)가 사용자 관리에서 재설정하거나 새로 추가할 수 있습니다.<br>
+    <b>Q. 로그인 시 "서버 연결 오류".</b> 잠시 후 재시도하고, 계속되면 관리자에게 서버 상태(<span class="mono">/api/health</span>) 확인을 요청하세요.<br>
+    <b>Q. 내 데이터가 다른 PC에 없어요.</b> 데이터는 브라우저별로 저장됩니다. JSON 내보내기로 옮기세요.</p></div>`;
+};
+
+/* ================= 기술문서 ================= */
+V.techdoc = function(){
+  const base = (location.protocol==='http:'||location.protocol==='https:') ? location.origin : 'https://<앱>.up.railway.app';
+  return `
+  <div class="section-head"><h2>🛠 기술문서</h2><span class="muted">아키텍처 · 실행 · API · 배포 (공모전 제출용)</span></div>
+  <div class="toolbar no-print"><span class="muted">인쇄하여 제출 서류의 기술문서로 사용할 수 있습니다.</span><div class="spacer" style="flex:1"></div><button class="btn" onclick="window.print()">🖨 인쇄 / PDF</button></div>
+
+  <div class="card"><h3>1. 개요 · 아키텍처</h3>
+    <p style="line-height:1.9;margin:4px 0 8px">K‑LabDoc은 진단검사실 지침서(SOP) 생애주기·교육·인증 대응을 통합 관리하는 <b>로컬 우선(local-first)</b> 웹 대시보드입니다. 프론트엔드는 외부 CDN·빌드 과정이 없는 <b>단일 HTML 파일</b>이며, 로그인/계정은 <b>Railway에 배포된 Node/Express 인증 서버</b>가 담당합니다.</p>
+    <div class="diff same" style="color:#333;line-height:1.7">브라우저 (public/index.html, 단일 파일 K‑LabDoc)<br>&nbsp;&nbsp;│&nbsp; fetch /api/auth/login (ID + PIN)<br>&nbsp;&nbsp;▼<br>Railway 인증 서버 (server/, Node/Express) — JWT 발급·검증<br>&nbsp;&nbsp;▼<br>사용자 저장소 (DATABASE_URL 있으면 PostgreSQL, 없으면 메모리 폴백)</div>
+    <p class="muted" style="margin:8px 0 0">검사실 업무 데이터는 브라우저 localStorage에 저장되고, 계정만 서버에서 중앙 관리합니다. 서버가 프론트 정적 파일도 함께 호스팅하여 Railway 서비스 1개로 배포됩니다.</p></div>
+
+  <div class="card"><h3>2. 기술 스택</h3>
+    <div class="two">
+      <div>· <b>프론트엔드</b> : 단일 HTML, Vanilla JavaScript, localStorage</div>
+      <div>· <b>문서 파서</b> : HWP 5.0(OLE2·CFB + raw DEFLATE), Word(.docx), HWPX — 클라이언트 사이드</div>
+      <div>· <b>서버</b> : Node.js ≥18, Express, JWT(jsonwebtoken), bcryptjs, helmet, cors, rate-limit</div>
+      <div>· <b>DB</b> : PostgreSQL(pg) 선택 · 미연결 시 메모리</div>
+      <div>· <b>배포</b> : Railway(Nixpacks) · GitHub 연동</div>
+      <div>· <b>라이선스</b> : MIT</div>
+    </div></div>
+
+  <div class="card"><h3>3. 실행 방법</h3>
+    <p style="margin:4px 0 2px"><b>로컬 서버</b></p>
+    <div class="diff same" style="color:#333">npm install<br>cp .env.example .env&nbsp;&nbsp;# JWT_SECRET 등 설정<br>npm start&nbsp;&nbsp;# http://localhost:3000</div>
+    <p style="margin:10px 0 2px"><b>서버 없이(오프라인 데모)</b> : <span class="mono">public/index.html</span> 파일을 브라우저로 직접 열기 → 로컬 PIN(0000)</p>
+    <p style="margin:10px 0 2px"><b>배포판</b> : 현재 서비스 주소 <a href="${esc(base)}" target="_blank" class="mono">${esc(base)}</a></p></div>
+
+  <div class="card"><h3>4. 인증 API 명세</h3>
+    <p class="muted" style="margin:4px 0 8px">기본 경로 <span class="mono">/api</span> · 인증 <span class="mono">Authorization: Bearer &lt;JWT&gt;</span> · JSON</p>
+    <div class="tbl-wrap"><table><thead><tr><th>메서드 · 경로</th><th>설명</th><th>요청/응답</th></tr></thead><tbody>
+      <tr><td class="mono">GET /api/health</td><td>서비스 상태</td><td class="mono">{ ok, store, time }</td></tr>
+      <tr><td class="mono">GET /api/users</td><td>로그인용 사용자 목록(PIN 제외)</td><td class="mono">{ users:[{id,name,role,group}] }</td></tr>
+      <tr><td class="mono">POST /api/auth/login</td><td>ID+PIN 로그인, JWT 발급 (분당 20회 제한)</td><td class="mono">→{id,pin} ←{token,user}</td></tr>
+      <tr><td class="mono">GET /api/auth/me</td><td>토큰 소유자 정보 (인증)</td><td class="mono">←{user}</td></tr>
+      <tr><td class="mono">POST /api/auth/change-pin</td><td>PIN 변경 (인증, 4자리+)</td><td class="mono">→{oldPin,newPin}</td></tr>
+      <tr><td class="mono">POST /api/users</td><td>사용자 추가 (전문의 권한)</td><td class="mono">→{id,name,role,group,pin}</td></tr>
+    </tbody></table></div>
+    <p style="margin:8px 0 2px"><b>예시</b></p>
+    <div class="diff same" style="color:#333">curl -X POST ${esc(base)}/api/auth/login \\<br>&nbsp;&nbsp;-H 'Content-Type: application/json' -d '{"id":"u1","pin":"0000"}'</div></div>
+
+  <div class="card"><h3>5. 데이터 저장 · 보안</h3>
+    <p style="line-height:1.9;margin:4px 0 0">· 업무 데이터 : 브라우저 <b>localStorage</b>(키 <span class="mono">klabdoc_db_v5</span>), JSON 내보내기/가져오기 지원.<br>
+    · 계정 : 서버 저장(PIN은 <b>bcrypt 해시</b>), 로그인 시 <b>JWT</b> 발급, 무단변경 방지 <b>감사로그</b>.<br>
+    · 보안 헤더(helmet)·CORS·로그인 <b>rate limit</b> 적용.<br>
+    · 배포 시 <b>JWT_SECRET</b>(긴 임의 문자열) 설정, 시드 PIN(0000) 변경 필수.<br>
+    · 공개 저장소 사용 시 시드 지침서에 대외비·환자 식별정보가 없는지 확인(필요 시 비식별 데모로 교체).</p></div>
+
+  <div class="card"><h3>6. 폴더 구조 · 배포</h3>
+    <div class="diff same" style="color:#333;line-height:1.6">klabdoc/<br>├─ public/index.html&nbsp;&nbsp;(단일 파일 프론트엔드)<br>├─ server/&nbsp;index.js · db.js · seed.js&nbsp;&nbsp;(인증 서버)<br>├─ docs/&nbsp;TUTORIAL.md · API.md · DEPLOY_RAILWAY.md<br>├─ package.json · railway.json · Procfile · .env.example<br>└─ README.md · LICENSE</div>
+    <p style="line-height:1.9;margin:8px 0 0"><b>Railway 배포</b> : GitHub 저장소를 Railway에 연결(Deploy from GitHub) → Variables에 <span class="mono">JWT_SECRET</span> 설정 → (선택) PostgreSQL 추가 시 <span class="mono">DATABASE_URL</span> 자동 주입 → Generate Domain. 헬스체크 경로 <span class="mono">/api/health</span>.<br>
+    <b>소스</b> : <span class="mono">https://github.com/yun7640/klabdoc</span></p></div>
+
+  <div class="card"><h3>7. 버전</h3>
+    <p class="muted" style="margin:4px 0 0">K‑LabDoc v1.3 · 2026년 진단검사 업무자동화 공모전(대한임상화학회) 출품작 · MIT License</p></div>`;
+};
 function openModal(title,body,footer){
   document.getElementById("modal").innerHTML=`<div class="mh"><h3>${title}</h3><button class="x" onclick="closeModal()">×</button></div><div class="mb">${body}</div><div class="mf">${footer||''}</div>`;
   document.getElementById("overlay").classList.add("show");
